@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { LocationResult, WeatherData, TempUnit } from "./types";
+import { fetchWeatherData } from "./utils/apiService";
 import { Header } from "./components/Header";
 import { FavoriteCities, DEFAULT_CITIES } from "./components/FavoriteCities";
 import { CurrentWeather } from "./components/CurrentWeather";
@@ -38,15 +39,7 @@ export default function App() {
     setIsLoading(true);
     setError(null);
     try {
-      const url = `/api/weather?lat=${loc.latitude}&lon=${loc.longitude}&timezone=${encodeURIComponent(
-        loc.timezone || "auto"
-      )}`;
-      const res = await fetch(url);
-      if (!res.ok) {
-        const errJson = await res.json();
-        throw new Error(errJson.error || "Failed to load weather forecast");
-      }
-      const data: WeatherData = await res.json();
+      const data = await fetchWeatherData(loc.latitude, loc.longitude, loc.timezone);
       setWeatherData(data);
     } catch (err: any) {
       console.error("Error loading weather:", err);

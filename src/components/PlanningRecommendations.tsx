@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { WeatherData, LocationResult, AIWeatherIntelligence } from "../types";
 import { generateRuleBasedIntelligence } from "../utils/weatherUtils";
+import { fetchAiIntelligence } from "../utils/apiService";
 
 interface PlanningRecommendationsProps {
   weather: WeatherData;
@@ -57,24 +58,14 @@ export const PlanningRecommendations: React.FC<PlanningRecommendationsProps> = (
         }
       }
 
-      const res = await fetch("/api/ai-intelligence", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          location,
-          currentWeather: weather.current,
-          dailyForecast: weather.daily,
-          hourlySummary,
-          userQuery: customPrompt || userQuery,
-        }),
+      const data = await fetchAiIntelligence({
+        location,
+        currentWeather: weather.current,
+        dailyForecast: weather.daily,
+        hourlySummary,
+        userQuery: customPrompt || userQuery,
       });
 
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.error || "Failed to generate AI plan");
-      }
-
-      const data = await res.json();
       setAiIntelligence(data);
     } catch (err: any) {
       console.error("AI plan error:", err);

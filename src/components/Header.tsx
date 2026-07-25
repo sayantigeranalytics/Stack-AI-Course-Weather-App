@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search, MapPin, Compass, Sparkles, Heart, Check } from "lucide-react";
 import { LocationResult, TempUnit } from "../types";
+import { fetchGeocodingResults } from "../utils/apiService";
 
 interface HeaderProps {
   currentLocation: LocationResult;
@@ -42,15 +43,10 @@ export const Header: React.FC<HeaderProps> = ({
     const timer = setTimeout(async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/geocoding?q=${encodeURIComponent(query)}`);
-        const data = await res.json();
-        if (data.results && Array.isArray(data.results)) {
-          setResults(data.results);
-          setIsOpen(true);
-          setSelectedIndex(-1);
-        } else {
-          setResults([]);
-        }
+        const locations = await fetchGeocodingResults(query);
+        setResults(locations);
+        setIsOpen(locations.length > 0);
+        setSelectedIndex(-1);
       } catch (err) {
         console.error("Failed to fetch geocoding results:", err);
         setResults([]);
