@@ -47,6 +47,7 @@ A modern, full-stack weather application built with **React**, **TypeScript**, *
 │   │   ├── PlanningRecommendations.tsx # AI planning insights & Q&A section
 │   │   └── FavoriteCities.tsx      # Saved locations quick-select bar
 │   └── utils/
+│       ├── apiService.ts           # Hybrid API service with server proxy & client fallback
 │       └── weatherUtils.ts         # WMO code translations, unit conversions, & fallbacks
 ├── .env.example                    # Template for environment configuration
 ├── package.json                    # Project dependencies & operational scripts
@@ -71,7 +72,7 @@ Copy `.env.example` to `.env` and provide your Gemini API key:
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-### Installation & Execution
+### Local Execution
 
 1. **Install Dependencies**:
    ```bash
@@ -89,3 +90,33 @@ GEMINI_API_KEY=your_gemini_api_key_here
    npm run build
    npm start
    ```
+
+---
+
+## 🌐 Exporting & Deployment Instructions
+
+### 1. Export from Google AI Studio to GitHub
+
+1. In the **Google AI Studio** workspace header, click on the **Settings / Export** menu or the **GitHub** icon.
+2. Select **Export to GitHub**.
+3. Authorize your GitHub account if prompted.
+4. Choose whether to create a **New Repository** or push to an **Existing Repository**.
+5. Click **Export** / **Push**. All project files will be committed and synchronized directly to your GitHub repository.
+
+### 2. Deploying from GitHub to Cloudflare Pages
+
+1. Log in to your [Cloudflare Dashboard](https://dash.cloudflare.com).
+2. In the left menu, select **Workers & Pages** > **Create application**.
+3. Select the **Pages** tab and click **Connect to Git**.
+4. Authorize Cloudflare to access your GitHub account and select your weather app repository.
+5. Configure the build settings:
+   - **Project Name**: `weather-intelligence-dashboard` (or preferred name)
+   - **Production Branch**: `main`
+   - **Framework Preset**: `Vite`
+   - **Build Command**: `npm run build`
+   - **Build Output Directory**: `dist`
+   - **Environment Variables** (Optional): Add `NODE_VERSION` set to `18` or `20`.
+6. Click **Save and Deploy**.
+7. Once deployed, Cloudflare will provide your live application URL (e.g., `https://your-app.pages.dev`).
+
+> 💡 **Static Hosting Compatibility**: The application features built-in API fallback handling. When hosted on static platforms like Cloudflare Pages where backend Express routes are not active, weather and geocoding queries gracefully fall back to direct client-side Open-Meteo API requests.
